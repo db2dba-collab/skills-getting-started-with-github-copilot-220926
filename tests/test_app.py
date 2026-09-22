@@ -20,3 +20,20 @@ def test_duplicate_signup_for_same_activity_is_blocked():
 
     assert second_response.status_code == 400
     assert "already" in second_response.json()["detail"].lower()
+
+
+def test_student_can_be_unregistered_from_activity():
+    activity_name = "Chess Club"
+    email = "remove-me@mergington.edu"
+
+    signup_response = client.post(
+        f"/activities/{activity_name}/signup?email={email}"
+    )
+    assert signup_response.status_code == 200
+
+    remove_response = client.delete(
+        f"/activities/{activity_name}/unregister?email={email}"
+    )
+
+    assert remove_response.status_code == 200
+    assert remove_response.json()["message"] == f"Removed {email} from {activity_name}"
